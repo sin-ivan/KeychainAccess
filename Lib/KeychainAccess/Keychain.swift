@@ -887,12 +887,18 @@ public final class Keychain {
 
     // MARK:
 
-    public class func allKeys(_ itemClass: ItemClass) -> [(String, String)] {
+    public class func allKeys(_ itemClass: ItemClass, accessGroupsCompatible: Bool = true) -> [(String, String)] {
         var query = [String: Any]()
         query[Class] = itemClass.rawValue
         query[AttributeSynchronizable] = SynchronizableAny
         query[MatchLimit] = MatchLimitAll
         query[ReturnAttributes] = kCFBooleanTrue
+        
+        if #available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *) {
+            if accessGroupsCompatible {
+                query[UseDataProtectionKeychain] = true
+            }
+        }
 
         var result: AnyObject?
         let status = SecItemCopyMatching(query as CFDictionary, &result)
@@ -1299,6 +1305,9 @@ private let UseAuthenticationUIFail = String(kSecUseAuthenticationUIFail)
 @available(iOS 9.0, OSX 10.11, watchOS 2.0, tvOS 9.0, *)
 private let UseAuthenticationUISkip = String(kSecUseAuthenticationUISkip)
 
+@available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *)
+private let UseDataProtectionKeychain = String(kSecUseDataProtectionKeychain)
+
 #if os(iOS) && !targetEnvironment(macCatalyst)
 /** Credential Key Constants */
 private let SharedPassword = String(kSecSharedPassword)
@@ -1361,6 +1370,12 @@ extension Options {
             }
         }
         #endif
+        
+        if #available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *) {
+            if accessGroup != nil {
+                query[UseDataProtectionKeychain] = true
+            }
+        }
 
         return query
     }
@@ -1403,6 +1418,12 @@ extension Options {
         }
 
         attributes[AttributeSynchronizable] = synchronizable ? kCFBooleanTrue : kCFBooleanFalse
+        
+        if #available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *) {
+            if accessGroup != nil {
+                attributes[UseDataProtectionKeychain] = true
+            }
+        }
 
         return (attributes, nil)
     }
