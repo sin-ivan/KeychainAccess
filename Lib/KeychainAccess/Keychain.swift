@@ -1372,9 +1372,9 @@ extension Options {
         #endif
         
         if #available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *) {
-            if accessGroup != nil {
+//            if accessGroup != nil {
                 query[UseDataProtectionKeychain] = true
-            }
+//            }
         }
 
         return query
@@ -1420,9 +1420,9 @@ extension Options {
         attributes[AttributeSynchronizable] = synchronizable ? kCFBooleanTrue : kCFBooleanFalse
         
         if #available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *) {
-            if accessGroup != nil {
+//            if accessGroup != nil {
                 attributes[UseDataProtectionKeychain] = true
-            }
+//            }
         }
 
         return (attributes, nil)
